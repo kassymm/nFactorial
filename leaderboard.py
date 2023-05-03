@@ -4,21 +4,19 @@ import os
 import json
 
  
-#  This class handles the leaderboard and holds some pretty good snippets (IMO...).
- 
-
+#  This class handles the leaderboard 
 
 class Leaderboard(pygame.font.Font):
     FILE_NAME = "highscore.json"
-    score = None
+    # score = None
     font = None
     new_score = None
     new_name = None
     scores = None
 
     def __init__(self, new_name, new_score):
-        self.score = 0
-        self.font = pygame.font.SysFont("comicsans", 15)
+        # self.score = 0
+        self.font = pygame.font.SysFont("comicsans", 64)
         self.new_score = int(new_score) 
         self.new_name = new_name 
 
@@ -37,7 +35,7 @@ class Leaderboard(pygame.font.Font):
     # Then we append *this* score to the list of previous scores, then we sort it in a separate method by highest score,
     # and finally we write it to the highscore.json-file. Tada!
     def save_score(self):
-        if not self.scores == None: # Make sure the prev. scores are loaded.
+        if not self.scores == None: # Make sure the previous scores are loaded.
             new_json_score = { # Create a JSON-object with the score, name and a timestamp.
                     "name":self.new_name,
                     "score":self.new_score,
@@ -56,8 +54,8 @@ class Leaderboard(pygame.font.Font):
 
     def sort_scores(self, json):
         # A somewhat dirty method for sorting the JSON entries... It works though!
-        scores_dict = dict() # Create a dictionary object.
-        sorted_list = list() # Create a list object.
+        scores_dict = dict()
+        sorted_list = list() 
 
         for obj in json:
             scores_dict[obj["score"]]=obj # Add every score to a dictionary with its score as key. Key collisions ensue...
@@ -83,6 +81,6 @@ class Leaderboard(pygame.font.Font):
         nbr_scores = 1
         for score in self.scores:
             if nbr_scores <= max_scores:
-                screen.blit(self.font.render(str(nbr_scores)+". " +str(score["name"]) +": " + str(score["score"]), 1, (0,0,0)), (220,200 + padding_y))
+                screen.blit(self.font.render(str(nbr_scores)+". " +str(score["name"]) +": " + str(score["score"]), 1, (0,0,0)), (100,100 + padding_y))
                 padding_y += 20
                 nbr_scores += 1

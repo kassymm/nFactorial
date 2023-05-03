@@ -1,19 +1,14 @@
 import pygame
-from pygame.locals import *
 import time
 import random
-# pygame.font.init()
-
+import inputbox
+from leaderboard import *
 pygame.init()
-
 
 width, height = 1276, 627
 key = 0
-
 win = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Ну, погоди!")
-
-
 bg = pygame.image.load("images/BG.png") #background
 wolf= pygame.image.load('images/wolf.png') #wolf
 egg_image = pygame.image.load('images/egg.png')
@@ -21,8 +16,6 @@ chicks = pygame.image.load("images/HP-black.png")
 pseudo_chicks = pygame.image.load("images/HP-gray.png")
 
 font = pygame.font.SysFont('comicsans', 60)
-
-
 
 # class of eggs. loc stands for the initial spawning nest of the egg. 
 # We update the cooridinates of each egg at every display iteration.
@@ -46,9 +39,6 @@ class EGG:
             self.x = 1130
             self.y = 260
             self.timer = 0
-
-
-
 
 def draw(eggs, key, left, right, score, lives, level):
     win.fill((210,210,210))
@@ -82,6 +72,14 @@ def draw(eggs, key, left, right, score, lives, level):
 
     pygame.display.update()
 
+
+def show_highscore():
+    global SCORE
+    global screen
+    global leaderboard
+    win.fill((210, 210, 210))
+    leaderboard.draw(screen)
+    pygame.display.update()
     
 
 def main():
@@ -119,6 +117,10 @@ def main():
         
 
         keys = pygame.key.get_pressed()
+    
+        # important_keys = [pygame.K_d, pygame.K_k, pygame.K_f, pygame.K_j]
+        # if True in important_keys:
+        #     key = important_keys.index(True)
         if keys[pygame.K_d]:
             key = 0
         if keys[pygame.K_k]:
@@ -135,18 +137,18 @@ def main():
                 egg.y +=10
                 if egg.y >=500:
                     lives -= 1
-                    if egg.loc in {0,2}:
+                    if egg.loc % 2 == 0:
                         left = True# insert temporary broken egg image on the left
-                    if egg.loc in {1,3}:
+                    else:
                         right = True
                     eggs.remove(egg)
 
             if egg.timer < 75:
-                if egg.loc in {0, 2}:
+                if egg.loc % 2 == 0:
                     egg.timer += 1*level
                     egg.x += 2*level
                     egg.y += 1*level
-                if egg.loc in {1, 3}:
+                else:
                     egg.timer += 1*level
                     egg.x -= 2*level
                     egg.y += 1*level
@@ -166,19 +168,13 @@ def main():
         draw(eggs, key, left, right, score, lives, level)        
         
         if lives == 0:
-            lost_text = font.render ("Ну, погоди!", 1, "black")
-            win.blit(lost_text, (width/2 - lost_text.get_width()/2, height/2 - lost_text.get_height()/2))
-            pygame.display.update()
-            pygame.time.delay(10000)
-            break
-                
-
-
-
-
-
-    
-    pygame.quit()
+            name = inputbox.gameover(win)
+            leaderboard = Leaderboard(name, score)
+            leaderboard.load_previous_scores()
+            leaderboard.save_score()
+            leaderboard.draw(win)
+            
+            
 
 if __name__ == "__main__":
     main()
