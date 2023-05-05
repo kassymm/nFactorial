@@ -13,7 +13,7 @@ You have 3 lives, indicated by the chick shadows on the upper left corner of the
 
 Beware of the black rotten eggs! Catch them, and you lose!
 
-Once the game is over, you will be asked to provide your nickname. Click the button to type and insert your nick. If successful, you will see your name on the leaderboard!
+Once the game is over, you will be asked to provide your nickname. Click the button to type and insert your name. If successful, you will see your name on the leaderboard!
 
 ## Instructions
 - Use `pip install pygame` to install the pygame module.
