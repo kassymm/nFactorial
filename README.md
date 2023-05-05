@@ -4,6 +4,14 @@
 
 The game was written using the Pygame library.
 
+The game has 3 levels of egg rolling speed. Also, in each level of difficulty, the rate of egg spawning increases with time.
+You have 3 lives, indicated by the chick shadows on the upper left corner of the gaming window. Once the egg drops to the ground, you lose a life and a chick turns black. 
+
+Once the game is over, you will be asked to provide your nickname. Click the button to type and insert your nick. If successful, you will see your name on the leaderboard!
+
+### Instructions
+Install the pygame library.
+
 Run the game.py file to start the game.
 
 You will be welcomed by the start menu with the leaderboard of top prior players.
