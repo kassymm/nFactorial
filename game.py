@@ -43,7 +43,7 @@ class EGG():
             self.y = 280
             self.timer = 0
 
-def draw(eggs, key, score, lives, level):
+def draw(eggs, key, score, lives, level, elapsed_time):
     # pygame.display.update()
     win.fill((255,255,255))
     win.blit(bg, (0, 0))
@@ -68,9 +68,12 @@ def draw(eggs, key, score, lives, level):
 
     score_text = font.render (f"{score}", 1, 'black')
     level_text = font.render (f"LVL: {level}", 1, 'black')
+    instructions_text = font.render("Use d,f,j,k buttons to play!", 1, "black")
 
     win.blit(score_text, (800, 30))
     win.blit(level_text, (900, 30))
+    if elapsed_time<5:
+        win.blit(instructions_text, (450, 130))
     
 
     win.blit(pseudo_chicks, (200, 50), (0, 0, 312, 94))
@@ -116,6 +119,7 @@ def main():
 
             keys = pygame.key.get_pressed()
             if keys[pygame.K_SPACE]:
+                start_time = time.time()
                 game_state = 1
                 fps_cap = 30
                 key = 0
@@ -129,14 +133,14 @@ def main():
 
 
         if game_state == 1: # game interface
-            
+            elapsed_time = time.time()-start_time
             clock = pygame.time.Clock()
             dt = clock.tick(fps_cap)
             keys = pygame.key.get_pressed()
             egg_count += level * dt
             increment = dt/30
 
-            draw(eggs, key, score, lives, level)
+            draw(eggs, key, score, lives, level, elapsed_time)
 
             if keys[pygame.K_d]:
                 key = 0
@@ -206,4 +210,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
