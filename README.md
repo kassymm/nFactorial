@@ -16,7 +16,7 @@ Once the game is over, you will be asked to provide your nickname. Click the but
 ## Instructions
 - Use `pip install pygame` to install the pygame module.
 - Press `SPACE` to start the game.
-- Once in the game interface, use the `d, f, j, k` key buttons to swith the basket between the (upper left, bottom left, upper right, bottom right) nests respectively.
+- Once in the game interface, use the `d, f, j, k` key buttons to switch the basket between the (upper left, bottom left, upper right, bottom right) nests respectively.
 - Adjust `fps_cap` variable in the game.py file to change the adjust the rate.
 - Adjust the `add_egg_increment` variable in the main() function to adjust the egg spawning rate.
 
