@@ -22,9 +22,10 @@ font = pygame.font.SysFont('comicsans', 32)
 # class of eggs. loc stands for the initial spawning nest of the egg. 
 # We update the cooridinates of each egg at every display iteration.
 class EGG():
-    def __init__ (self, loc):
+    def __init__ (self, rotten, loc):
         self.timer = 0
         self.loc = loc
+        self.rotten = rotten
         if self.loc == 0:
             self.x = 86
             self.y = 110
@@ -59,7 +60,10 @@ def draw(eggs, key, score, lives, level):
     for egg in eggs:
         # if you can afford computationally you can uncommment the next line to draw eggs instead of ellipses
         # win.blit(egg_image, (egg.x, egg.y))
-        pygame.draw.ellipse(win, "black", pygame.Rect(egg.x, egg.y, 20, 30), width=3)
+        if egg.rotten:
+            pygame.draw.ellipse(win, "black", pygame.Rect(egg.x, egg.y, 20, 30))
+        else:
+            pygame.draw.ellipse(win, "black", pygame.Rect(egg.x, egg.y, 20, 30), width=3)
 
 
     score_text = font.render (f"{score}", 1, 'black')
@@ -145,7 +149,8 @@ def main():
 
             if egg_count > egg_add_increment:
                 nest = random.randint(0, 3)
-                eggs.append(EGG(nest))
+                rotten = bool(random.uniform(0, 1) < level/10)
+                eggs.append(EGG(rotten, nest))
                 egg_add_increment = max (1000, egg_add_increment - 20)
                 egg_count = 0
 
@@ -155,8 +160,10 @@ def main():
         
                 if egg.timer == -1:
                     egg.y +=10*increment
-                    if egg.y >=500:
+                    if egg.y >=500 and not egg.rotten:
                         lives -= 1
+                        eggs.remove(egg)
+                    if egg.y >=500 and egg.rotten:
                         eggs.remove(egg)
 
                 if 0<=egg.timer < 75:
@@ -170,16 +177,20 @@ def main():
                         egg.y += 1*level*increment
                         
                 if 75<= egg.timer:
-                    if key == egg.loc:
+                    if key == egg.loc and not egg.rotten:
                         eggs.remove(egg)
                         score += 1
-
+                    if key == egg.loc and egg.rotten:
+                        eggs.remove(egg)
+                        lives = 0
+                    
                     else:
                         egg.timer = -1
                         
         
             if lives == 0:
                 game_state = 2
+                pygame.time.delay(1000)
         
         if game_state == 2:
             name = inputbox.gameover(win)
