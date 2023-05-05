@@ -15,7 +15,7 @@ class Leaderboard(pygame.font.Font):
     scores = None
 
     def __init__(self, new_name, new_score):
-        # self.score = 0
+        self.score = 0
         self.font = pygame.font.SysFont("comicsans", 64)
         self.new_score = int(new_score) 
         self.new_name = new_name 

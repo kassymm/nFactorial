@@ -2,6 +2,7 @@ import pygame
 import time
 import random
 import inputbox
+import json
 from leaderboard import *
 pygame.init()
 
@@ -14,34 +15,36 @@ wolf= pygame.image.load('images/wolf.png') #wolf
 egg_image = pygame.image.load('images/egg.png')
 chicks = pygame.image.load("images/HP-black.png")
 pseudo_chicks = pygame.image.load("images/HP-gray.png")
+highscore_background = pygame.image.load("images/logo.png")
 
-font = pygame.font.SysFont('comicsans', 60)
+font = pygame.font.SysFont('comicsans', 32)
 
 # class of eggs. loc stands for the initial spawning nest of the egg. 
 # We update the cooridinates of each egg at every display iteration.
-class EGG:
+class EGG():
     def __init__ (self, loc):
         self.timer = 0
         self.loc = loc
         if self.loc == 0:
             self.x = 86
-            self.y = 96
+            self.y = 110
             self.timer = 0
         if self.loc == 1:
-            self.x = 1130
-            self.y = 96
-            self.timer = 0
+            self.x = 1170
+            self.y = 110
+            self.timer = 0.
         if self.loc == 2:
             self.x = 86
-            self.y = 260
+            self.y = 280
             self.timer = 0
         if self.loc == 3:
-            self.x = 1130
-            self.y = 260
+            self.x = 1170
+            self.y = 280
             self.timer = 0
 
-def draw(eggs, key, left, right, score, lives, level):
-    win.fill((210,210,210))
+def draw(eggs, key, score, lives, level):
+    # pygame.display.update()
+    win.fill((255,255,255))
     win.blit(bg, (0, 0))
     if key == 0:
         win.blit(wolf, (200, 160), (0,0, 396, 381)) #(horizontal, vertical)
@@ -51,12 +54,13 @@ def draw(eggs, key, left, right, score, lives, level):
         win.blit(wolf, (200, 160), (0,381*2, 396, 381)) 
     if key == 3:
         win.blit(wolf, (700, 160), (0,381*3, 396, 381))
+    
+
     for egg in eggs:
-        win.blit(egg_image, (egg.x, egg.y))
-    if left:
-        pass #insert temporary image of the broken egg on the left
-    if right:
-        pass #insert temporary image of the broken egg on the right
+        # if you can afford computationally you can uncommment the next line to draw eggs instead of ellipses
+        # win.blit(egg_image, (egg.x, egg.y))
+        pygame.draw.ellipse(win, "black", pygame.Rect(egg.x, egg.y, 20, 30), width=3)
+
 
     score_text = font.render (f"{score}", 1, 'black')
     level_text = font.render (f"LVL: {level}", 1, 'black')
@@ -68,74 +72,68 @@ def draw(eggs, key, left, right, score, lives, level):
     win.blit(pseudo_chicks, (200, 50), (0, 0, 312, 94))
     win.blit(chicks, (200, 50), (0, 0, 104*(3 - lives), 94))
 
-
-
     pygame.display.update()
 
 def draw_start_menu():
-    win.fill((0, 0, 0))
-    font = pygame.font.SysFont('arial', 40)
-    title = font.render('My Game', True, (255, 255, 255))
-    start_button = font.render('Start', True, (255, 255, 255))
-    win.blit(title, (width/2 - title.get_width()/2, height/2 - title.get_height()/2))
-    win.blit(start_button, (width/2 - start_button.get_width()/2, height/2 + start_button.get_height()/2))
     pygame.display.update()
+    win.fill((255, 255, 255))
+    win.blit(highscore_background, (450,131))
+    font = pygame.font.SysFont('comicsans', 64)
 
-# def show_highscore():
-#     global SCORE
-#     global win
-#     global leaderboard
-#     win.fill((210, 210, 210))
-#     leaderboard.draw(win)
-#     pygame.display.update()
+    start_button = font.render('Press SPACE to start', True, (0,0,0))
+
+    win.blit(start_button, (550, 400))
+    FILE_NAME = "highscore.json"
+    highscore_file = open(FILE_NAME, "r+")
+    scores = json.load(highscore_file)
+    padding_y = 0
+    max_scores = 8 # We *could* paint every score, but it's not any good if you can't see them (because we run out of the screen).
+    nbr_scores = 1
+    for score in scores:
+        if nbr_scores <= max_scores:
+            win.blit(font.render(str(nbr_scores)+". " +str(score["name"]) +": " + str(score["score"]), 1, (0,0,0)), (50,50 + padding_y))
+            padding_y += 60
+            nbr_scores += 1
+
+
     
 
 def main():
-    run = True
-    clock = pygame.time.Clock()
-    key = 0
-    score = 0
-    lives = 3
-    left = False
-    right = False
-    # start_time = time.time()
-    # elapsed_time = 0
-    egg_add_increment = 3000 #time between the egg spawns
-    egg_count = 0 #variable to track the time between spawns
-    level = 1
-    egg1 = EGG(1)
-    game_state = "start_menu"
-
-    # I want to have a list of eggs that are present on the win at each moment.
-    eggs = [egg1]
-
-    while run:
+    game_state = 0 # 0, 1, 2 stand for start menu, game, game over
+    while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-        if game_state == "game":
-            dt = clock.tick(60)
-            egg_count += dt
 
-            # elapsed_time = time.time - start_time 
-            if egg_count > egg_add_increment:
-                nest = random.randint(0, 3)
-                eggs.append(EGG(nest))
-                egg_add_increment = max (1000, egg_add_increment - 20)
-                egg_count = 0
+        if game_state == 0: #start menu
 
-            # for event in pygame.event.get():
-            #     if event.type == pygame.QUIT: # closing the game window
-            #         run = False
-            #         break
-            
+            draw_start_menu()
 
             keys = pygame.key.get_pressed()
-        
-            # important_keys = [pygame.K_d, pygame.K_k, pygame.K_f, pygame.K_j]
-            # if True in important_keys:
-            #     key = important_keys.index(True)
+            if keys[pygame.K_SPACE]:
+                game_state = 1
+                fps_cap = 30
+                key = 0
+                score = 0
+                lives = 3
+                egg_add_increment = 1000 #time between the egg spawns
+                egg_count = 0 #variable to track the time between spawns
+                level = 1
+                eggs = [] # I want to have a list of eggs that are present on the win at each moment.
+
+
+
+        if game_state == 1: # game interface
+            
+            clock = pygame.time.Clock()
+            dt = clock.tick(fps_cap)
+            keys = pygame.key.get_pressed()
+            egg_count += level * dt
+            increment = dt/30
+
+            draw(eggs, key, score, lives, level)
+
             if keys[pygame.K_d]:
                 key = 0
             if keys[pygame.K_k]:
@@ -144,29 +142,32 @@ def main():
                 key = 2
             if keys[pygame.K_j]:
                 key = 3
+
+            if egg_count > egg_add_increment:
+                nest = random.randint(0, 3)
+                eggs.append(EGG(nest))
+                egg_add_increment = max (1000, egg_add_increment - 20)
+                egg_count = 0
+
             level = sum(1 for x in [0, 10, 30] if score>=x)
 
             for egg in eggs:
-
+        
                 if egg.timer == -1:
-                    egg.y +=10*dt/60
+                    egg.y +=10*increment
                     if egg.y >=500:
                         lives -= 1
-                        if egg.loc % 2 == 0:
-                            left = True# insert temporary broken egg image on the left
-                        else:
-                            right = True
                         eggs.remove(egg)
 
                 if 0<=egg.timer < 75:
                     if egg.loc % 2 == 0:
-                        egg.timer += 1*level*dt/60
-                        egg.x += 2*level*dt/60
-                        egg.y += 1*level*dt/60
+                        egg.timer += 1*level*increment
+                        egg.x += 2*level*increment
+                        egg.y += 1*level*increment
                     else:
-                        egg.timer += 1*level*dt/60
-                        egg.x -= 2*level*dt/60
-                        egg.y += 1*level*dt/60
+                        egg.timer += 1*level*increment
+                        egg.x -= 2*level*increment
+                        egg.y += 1*level*increment
                         
                 if 75<= egg.timer:
                     if key == egg.loc:
@@ -175,31 +176,20 @@ def main():
 
                     else:
                         egg.timer = -1
-
-                draw(eggs, key, left, right, score, lives, level)        
+                        
         
             if lives == 0:
-                game_state = "game_over"
-                # name = inputbox.gameover(win)
-                # leaderboard = Leaderboard(name, score)
-                # leaderboard.load_previous_scores()
-                # leaderboard.save_score()
-                # leaderboard.draw(win)
+                game_state = 2
         
-        if game_state == "game_over":
+        if game_state == 2:
             name = inputbox.gameover(win)
             leaderboard = Leaderboard(name, score)
             leaderboard.load_previous_scores()
             leaderboard.save_score()
-            game_state = "start_menu"
+            game_state = 0
     
-            # leaderboard.draw(win)
+
         
-        if game_state == "start_menu":
-            draw_start_menu()
-            keys = pygame.key.get_pressed()
-            if keys[pygame.K_SPACE]:
-                game_state = "game"
 
             
 
