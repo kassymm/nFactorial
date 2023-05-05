@@ -20,4 +20,10 @@ Press SPACE to start the game.
 
 Once in the game interface, use the (d, f, j, k) key buttons to swith the basket between the (upper left, bottom left, upper right, bottom right) nests respectively.
 
+### Developer tools
+
+If desired, you can adjust the fps_cap in the game.py file to change the refresh rate.
+To add more spice, you can also adjust the add_egg_increment variable in the main() function to change the rate of egg spawning.
+
+
 Enjoy!
