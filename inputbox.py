@@ -3,7 +3,7 @@ width, height = 1276, 627
 win = pg.display.set_mode((width, height))
 
 def gameover(screen):
-    highscore_background = pg.image.load("images/logo.png")
+    highscore_background = pg.image.load("assets/logo.png")
     # bg = pg.image.load("images/BG.png") #background
 
     font = pg.font.Font(None, 64)

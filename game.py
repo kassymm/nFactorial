@@ -10,12 +10,14 @@ width, height = 1276, 627
 key = 0
 win = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Ну, погоди!")
-bg = pygame.image.load("images/BG.png") #background
-wolf= pygame.image.load('images/wolf.png') #wolf
-egg_image = pygame.image.load('images/egg.png')
-chicks = pygame.image.load("images/HP-black.png")
-pseudo_chicks = pygame.image.load("images/HP-gray.png")
-highscore_background = pygame.image.load("images/logo.png")
+bg = pygame.image.load("assets/BG.png") #background
+wolf= pygame.image.load('assets/wolf.png') #wolf
+egg_image = pygame.image.load('assets/egg.png')
+chicks = pygame.image.load("assets/HP-black.png")
+pseudo_chicks = pygame.image.load("assets/HP-gray.png")
+highscore_background = pygame.image.load("assets/logo.png")
+track = pygame.mixer.Sound("assets/fonovaya-nu-pogodi--zastavka-polnaya-versiya.mp3")
+nupogodi = pygame.mixer.Sound("assets/pogodi.mp3")
 
 font = pygame.font.SysFont('comicsans', 32)
 
@@ -120,6 +122,7 @@ def main():
             keys = pygame.key.get_pressed()
             if keys[pygame.K_SPACE]:
                 start_time = time.time()
+                track.play()
                 game_state = 1
                 fps_cap = 30
                 key = 0
@@ -194,9 +197,11 @@ def main():
         
             if lives == 0:
                 game_state = 2
-                pygame.time.delay(1000)
+                track.stop()
+                # pygame.time.delay(1000)
         
         if game_state == 2:
+            nupogodi.play(loops = 0)
             name = inputbox.gameover(win)
             leaderboard = Leaderboard(name, score)
             leaderboard.load_previous_scores()
@@ -210,5 +215,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
